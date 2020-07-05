@@ -1,0 +1,23 @@
+service: webhooks
+frameworkVersion: ">=1.60.5"
+provider:
+  name: aws
+  runtime: ruby2.7
+package:
+  exclude:
+    - Gemfile
+    - Gemfile.lock
+    - Rakefile
+    - spec/**
+custom:
+  hooks:
+    package:initialize:
+      - bundle install --path vendor/bundle --without test development --clean
+      - rm -rf ./vendor/bundle/ruby/2.7.0/cache
+    package:finalize:
+      - bundle install --path vendor/bundle --with test development --clean
+functions:
+  hello:
+    handler: handler.hello
+plugins:
+  - serverless-hooks-plugin
